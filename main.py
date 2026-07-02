@@ -19,15 +19,12 @@ SI6iyrYbKR0NEBSqq4XkadEjsCs4F1RncsS4LlgniT7GlkL9Mce3b0wGLs9/7ZIX
 dQIDAQAB
 -----END PUBLIC KEY-----"""
 
-
 class VerifyRequest(BaseModel):
     token: str
-
 
 @app.get("/")
 def home():
     return {"message": "JWT verification API running"}
-
 
 @app.post("/verify")
 def verify_token(request: VerifyRequest):
@@ -38,16 +35,14 @@ def verify_token(request: VerifyRequest):
             algorithms=["RS256"],
             issuer=ISSUER,
             audience=AUDIENCE,
-            options={
-                "require": ["exp", "iss", "aud", "sub", "email"]
-            },
+            options={"require": ["exp", "iss", "aud"]},
         )
 
         return {
             "valid": True,
-            "email": payload["email"],
-            "sub": payload["sub"],
-            "aud": payload["aud"],
+            "email": payload.get("email"),
+            "sub": payload.get("sub"),
+            "aud": payload.get("aud"),
         }
 
     except PyJWTError:
